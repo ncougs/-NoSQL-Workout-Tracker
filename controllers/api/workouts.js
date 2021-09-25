@@ -11,6 +11,16 @@ router.get('/', async (req, res) => {
     };
   });
 
+  router.get('/range', async (req, res) => {
+    try {
+        const workouts = await Workout.find({}).populate('exercises');
+        res.json(workouts.slice(-7));
+    }
+    catch (err) {
+      res.status(500).json(err);
+    };
+  });
+
 router.post('/', async (req, res) => {
     try {
         const data = req.body;
@@ -22,7 +32,7 @@ router.post('/', async (req, res) => {
     };
 });
 
-router.post("/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
     try {
         const id = req.params.id;
         const data = req.body;
