@@ -149,7 +149,7 @@ if (completeButton) {
 if (addButton) {
   addButton.addEventListener("click", handleFormSubmit);
 }
-toast.addEventListener("animationend", handleToastAnimationEnd);
+if(toast){toast.addEventListener("animationend", handleToastAnimationEnd);}
 
 document
   .querySelectorAll("input")
