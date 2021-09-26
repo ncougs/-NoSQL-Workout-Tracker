@@ -24,7 +24,12 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         const data = req.body;
-        const newWorkout = await Workout.create(data);
+
+        const workout = new Workout(data);
+        workout.getTotalDuration();
+     
+        const newWorkout = await Workout.create(workout);
+        
         res.json(newWorkout);
     }
     catch (err) {
@@ -34,14 +39,18 @@ router.post('/', async (req, res) => {
 
 router.put("/:id", async (req, res) => {
     try {
-        const id = req.params.id;
+        const _id = req.params.id;
         const data = req.body;
     
         const newExercise = await Exercise.create(data);
-        const currentWorkout = await Workout.findById(id);
+        const updatedExercise = await Workout.findOneAndUpdate({ _id }, { $push: { exercises: newExercise } }, { new: true });
+
+        const currentWorkout = await Workout.findById(_id).populate('exercises');
+        const totalDuration = currentWorkout.getTotalDuration();
+   
+        const updatedDuration = await Workout.updateOne({ _id }, { totalDuration });
         
-        const addition = await currentWorkout.update({ $push: { exercises: newExercise } }, { new: true });
-        res.json(addition);
+        res.json(updatedDuration);
     }
     catch (err) {
         res.status(500).json(err);
